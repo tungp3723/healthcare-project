@@ -17,7 +17,7 @@ from airflow.providers.google.cloud.operators.dataproc import (
 PROJECT_ID = "project-435d5696-162f-4a35-98d"
 REGION = "asia-southeast1"
 CLUSTER_NAME = "healthcare-cluster"
-COMPOSER_BUCKET = "asia-southeast1-healthcare--83775f21-bucket"
+COMPOSER_BUCKET = "asia-southeast1-healthcare--ea0d5755-bucket"
 
 GCS_JOB_FILE_1 = f"gs://{COMPOSER_BUCKET}/data/Ingestion/hospitalA_postgresToLanding.py"
 GCS_JOB_FILE_2 = f"gs://{COMPOSER_BUCKET}/data/Ingestion/hospitalB_postgresToLanding.py"
