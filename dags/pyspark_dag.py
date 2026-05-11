@@ -14,7 +14,7 @@ from airflow.providers.google.cloud.operators.dataproc import (
 # =========================
 # CONFIG
 # =========================
-PROJECT_ID = "project-435d5696-162f-4a35-98d"
+PROJECT_ID = "project-8bf7907a-2104-49b0-99f"
 REGION = "asia-southeast1"
 CLUSTER_NAME = "healthcare-cluster"
 COMPOSER_BUCKET = "asia-southeast1-healthcare--ea0d5755-bucket"
