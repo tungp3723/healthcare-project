@@ -19,10 +19,10 @@ REGION = "asia-southeast1"
 CLUSTER_NAME = "healthcare-cluster"
 COMPOSER_BUCKET = "asia-southeast1-healthcare--ea0d5755-bucket"
 
-GCS_JOB_FILE_1 = f"gs://{COMPOSER_BUCKET}/data/Ingestion/hospitalA_postgresToLanding.py"
-GCS_JOB_FILE_2 = f"gs://{COMPOSER_BUCKET}/data/Ingestion/hospitalB_postgresToLanding.py"
-GCS_JOB_FILE_3 = f"gs://{COMPOSER_BUCKET}/data/Ingestion/claims.py"
-GCS_JOB_FILE_4 = f"gs://{COMPOSER_BUCKET}/data/Ingestion/cpt_codes.py"
+GCS_JOB_FILE_1 = f"gs://{COMPOSER_BUCKET}/data/ingestion/HospitalA_toLanding.py"
+GCS_JOB_FILE_2 = f"gs://{COMPOSER_BUCKET}/data/ingestion/HospitalB_toLanding.py"
+GCS_JOB_FILE_3 = f"gs://{COMPOSER_BUCKET}/data/ingestion/Claims.py"
+GCS_JOB_FILE_4 = f"gs://{COMPOSER_BUCKET}/data/ingestion/CptCode.py"
 
 def pyspark_job(main_python_file_uri: str) -> dict:
     return {
