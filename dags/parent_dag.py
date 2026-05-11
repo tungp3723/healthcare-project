@@ -32,7 +32,7 @@ with DAG(
         task_id="trigger_pyspark_dag",
         trigger_dag_id="pyspark_dag",
         wait_for_completion=True,
-        reset_dag_run=True,  # tránh trùng run_id khi rerun
+        reset_dag_run=True,  
     )
 
     # Task to trigger BigQuery DAG
