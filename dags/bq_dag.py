@@ -1,9 +1,7 @@
 import pendulum
-import os
 
-from airflow import DAG
 from datetime import timedelta
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from airflow import DAG
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
 # =========================
@@ -11,28 +9,10 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 # =========================
 PROJECT_ID = "project-8bf7907a-2104-49b0-99f"
 LOCATION = "asia-southeast1"
-COMPOSER_BUCKET = "asia-southeast1-healthcare--ea0d5755-bucket"
 
+# In Cloud Composer, the environment bucket is mounted at /home/airflow/gcs
+SQL_BASE_PATH = "/home/airflow/gcs/data/BQ"
 
-# =========================
-# READ SQL FROM GCS
-# =========================
-def read_sql_from_gcs(object_name: str) -> str:
-    hook = GCSHook()
-    return hook.download(
-        bucket_name=COMPOSER_BUCKET,
-        object_name=object_name,
-    ).decode("utf-8")
-
-
-BRONZE_QUERY = read_sql_from_gcs("data/BQ/bronze.sql")
-SILVER_QUERY = read_sql_from_gcs("data/BQ/silver.sql")
-GOLD_QUERY = read_sql_from_gcs("data/BQ/gold.sql")
-
-
-# =========================
-# DEFAULT ARGS
-# =========================
 default_args = {
     "owner": "TungPD20",
     "retries": 1,
@@ -42,10 +22,6 @@ default_args = {
     "email_on_retry": False,
 }
 
-
-# =========================
-# DAG
-# =========================
 with DAG(
     dag_id="bigquery_dag",
     start_date=pendulum.datetime(2024, 1, 1, tz="UTC"),
@@ -62,7 +38,7 @@ with DAG(
         location=LOCATION,
         configuration={
             "query": {
-                "query": BRONZE_QUERY,
+                "query": f"{{% include '{SQL_BASE_PATH}/bronze.sql' %}}",
                 "useLegacySql": False,
                 "priority": "BATCH",
             }
@@ -75,7 +51,7 @@ with DAG(
         location=LOCATION,
         configuration={
             "query": {
-                "query": SILVER_QUERY,
+                "query": f"{{% include '{SQL_BASE_PATH}/silver.sql' %}}",
                 "useLegacySql": False,
                 "priority": "BATCH",
             }
@@ -88,7 +64,7 @@ with DAG(
         location=LOCATION,
         configuration={
             "query": {
-                "query": GOLD_QUERY,
+                "query": f"{{% include '{SQL_BASE_PATH}/gold.sql' %}}",
                 "useLegacySql": False,
                 "priority": "BATCH",
             }
