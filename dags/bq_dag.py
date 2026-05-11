@@ -11,7 +11,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 # =========================
 PROJECT_ID = "project-8bf7907a-2104-49b0-99f"
 LOCATION = "asia-southeast1"
-COMPOSER_BUCKET = "asia-southeast1-healthcare--83775f21-bucket"
+COMPOSER_BUCKET = "asia-southeast1-healthcare--ea0d5755-bucket"
 
 
 # =========================
