@@ -1,8 +1,8 @@
-import os
 import pendulum
 
 from airflow import DAG
 from datetime import timedelta
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
 # =========================
@@ -10,29 +10,23 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 # =========================
 PROJECT_ID = "project-8bf7907a-2104-49b0-99f"
 LOCATION = "asia-southeast1"
-
-# Lấy thư mục hiện tại của file DAG
-DAG_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# SQL files nằm trong thư mục: dags/data/BQ/
-SQL_BASE_PATH = os.path.join(DAG_DIR, "data", "BQ")
-
-SQL_FILE_PATH_1 = os.path.join(SQL_BASE_PATH, "bronze.sql")
-SQL_FILE_PATH_2 = os.path.join(SQL_BASE_PATH, "silver.sql")
-SQL_FILE_PATH_3 = os.path.join(SQL_BASE_PATH, "gold.sql")
+COMPOSER_BUCKET = "asia-southeast1-healthcare--83775f21-bucket"
 
 
 # =========================
-# READ SQL FILE
+# READ SQL FROM GCS
 # =========================
-def read_sql_file(file_path: str) -> str:
-    with open(file_path, "r", encoding="utf-8") as file:
-        return file.read()
+def read_sql_from_gcs(object_name: str) -> str:
+    hook = GCSHook()
+    return hook.download(
+        bucket_name=COMPOSER_BUCKET,
+        object_name=object_name,
+    ).decode("utf-8")
 
 
-BRONZE_QUERY = read_sql_file(SQL_FILE_PATH_1)
-SILVER_QUERY = read_sql_file(SQL_FILE_PATH_2)
-GOLD_QUERY = read_sql_file(SQL_FILE_PATH_3)
+BRONZE_QUERY = read_sql_from_gcs("data/BQ/bronze.sql")
+SILVER_QUERY = read_sql_from_gcs("data/BQ/silver.sql")
+GOLD_QUERY = read_sql_from_gcs("data/BQ/gold.sql")
 
 
 # =========================
@@ -61,7 +55,6 @@ with DAG(
     tags=["gcs", "bq", "etl", "elt"],
 ) as dag:
 
-    # Task 1: Create bronze tables
     bronze_tables = BigQueryInsertJobOperator(
         task_id="bronze_tables",
         project_id=PROJECT_ID,
@@ -75,7 +68,6 @@ with DAG(
         },
     )
 
-    # Task 2: Create silver tables
     silver_tables = BigQueryInsertJobOperator(
         task_id="silver_tables",
         project_id=PROJECT_ID,
@@ -89,7 +81,6 @@ with DAG(
         },
     )
 
-    # Task 3: Create gold tables
     gold_tables = BigQueryInsertJobOperator(
         task_id="gold_tables",
         project_id=PROJECT_ID,
@@ -103,5 +94,4 @@ with DAG(
         },
     )
 
-    # Task dependencies
     bronze_tables >> silver_tables >> gold_tables
