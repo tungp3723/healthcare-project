@@ -98,7 +98,7 @@ with DAG(
         project_id=PROJECT_ID,
         region=REGION,
         cluster_name=CLUSTER_NAME,
-        trigger_rule=TriggerRule.ALL_DONE,  # vẫn stop dù job fail
+        trigger_rule=TriggerRule.ALL_DONE,  
     )
 
 # Task dependencies
